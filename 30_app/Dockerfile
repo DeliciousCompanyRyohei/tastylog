@@ -1,11 +1,19 @@
-FROM node:16-alpine
+FROM node:20-alpine
+
+# Python と build-tools のインストール
+RUN apk add --no-cache python3 py3-pip make g++
 
 COPY . /home/node/webapp
 
-RUN cd /home/node/webapp; \
-    mv docker-entrypoint.sh /usr/local/bin; \
-    chmod +x /usr/local/bin/docker-entrypoint.sh; \
-    npm install;
+# 作業ディレクトリを設定
+WORKDIR /home/node/webapp
+
+# docker-entrypoint.sh を /usr/local/bin に移動し、実行可能に設定
+RUN mv docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh && \
+    chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# npm パッケージをインストール
+RUN npm install
 
 ENV MYSQL_HOST="127.0.0.1"
 ENV MYSQL_PORT="3306"
